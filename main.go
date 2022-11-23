@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -37,6 +38,7 @@ func main() {
 
 type Searcher struct {
 	CompleteWorks string
+	CompleteWorksLowerCase string
 	SuffixArray   *suffixarray.Index
 }
 
@@ -68,12 +70,15 @@ func (s *Searcher) Load(filename string) error {
 		return fmt.Errorf("Load: %w", err)
 	}
 	s.CompleteWorks = string(dat)
-	s.SuffixArray = suffixarray.New(dat)
+	s.CompleteWorksLowerCase = strings.ToLower(s.CompleteWorks)
+	s.SuffixArray = suffixarray.New([]byte(s.CompleteWorksLowerCase))
 	return nil
 }
 
 func (s *Searcher) Search(query string) []string {
-	idxs := s.SuffixArray.Lookup([]byte(query), -1)
+	// The search happens here.
+	idxs := s.SuffixArray.Lookup([]byte(strings.ToLower(query)), -1)		// []int
+
 	results := []string{}
 	for _, idx := range idxs {
 		results = append(results, s.CompleteWorks[idx-250:idx+250])
