@@ -11,14 +11,16 @@
 </head>
 
 <body>
-	</br>
-	</br>
 	<div class="max-w-2xl mx-auto">
-		<h1 class="text-3xl font-bold ">
-			Welcome to ShakeSearch! 
-		</h1>
 		</br>
-
+		<!-- Image -->
+		<div> 
+			<img class="h-[600px] w-[600px]"
+					src="https://blog.12min.com/wp-content/uploads/2018/05/27d-William-Shakespeare.jpg"
+					alt="google Logo" /> 
+		</div>
+		</br>
+		
 		<form class="flex items-center" id="form">   
 			<label for="query" class="sr-only">Search</label>
 				<div class="relative w-full">
@@ -46,15 +48,16 @@
 				</button>
 		</form>
 
+		<!--
 		<p class="mt-5">
 			Enter a word above to see the context in which William Shakespeare used it. 
 			Our search currently supports case-insensitive search, but fuzzy search and
 			pagination are not yet supported.
 		</p>
+		-->
 			<script src="https://unpkg.com/flowbite@1.4.0/dist/flowbite.js"></script>
 	</div>
-	</br>
-	</br>
+
 
 	<!-- original query form 
 	<p>
@@ -66,11 +69,12 @@
 	</p>
 	-->
 
-	<p>
-		<table id="table">
-		  <tbody id="table-body"></tbody>
+	<div class="overflow-x-auto relative shadow-md sm:rounded-lg margin-left:100px">
+		<table id="table"
+				class="w-1/2 text-sm text-left text-gray-500 dark:text-gray-400">
+			<tbody id="table-body"></tbody>
 		</table>
-	</p>
+	</div>
 
   <script src="app.js"></script>
 </body>

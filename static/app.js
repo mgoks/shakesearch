@@ -14,9 +14,16 @@ const Controller = {
     const table = document.getElementById("table-body");
     const rows = [];
     for (let result of results) {
-      rows.push(`<tr>${result}<tr/>`);
+      //const row = `<tr>${result}<tr/>`;
+			const row = `
+					<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+						<td class="py-4 px-6">
+							${result}
+						</td>
+					</tr>`
+			rows.push(row);
     }
-    table.innerHTML = rows;
+    table.innerHTML = rows.join('\n');
   },
 };
 

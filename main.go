@@ -77,10 +77,7 @@ func (s *Searcher) Load(filename string) error {
 
 func (s *Searcher) Search(query string) []string {
 	charOffset := 125
-
-	// The search happens here.
 	idxs := s.SuffixArray.Lookup([]byte(strings.ToLower(query)), -1)		// []int
-
 	results := []string{}
 	for _, idx := range idxs {
 		results = append(results, s.CompleteWorks[idx - charOffset : idx + charOffset])
