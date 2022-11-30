@@ -13,16 +13,18 @@ const Controller = {
   updateTable: (results) => {
     const table = document.getElementById("table-body");
     const rows = [];
-    for (let result of results) {
-      //const row = `<tr>${result}<tr/>`;
+		for (let i = 0; i < results.length; i += 2) {
+			const title = results[i];
+			const text = results[i+1];
 			const row = `
 					<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
 						<td class="py-4 px-6">
-							${result}
+							<h6 class="text-lg font-bold dark:text-blue">${title}</h6>
+							<p>${text}</p>
 						</td>
-					</tr>`
+					</tr>`;
 			rows.push(row);
-    }
+		}
     table.innerHTML = rows.join('\n');
   },
 };
