@@ -14,6 +14,7 @@ import (
 )
 
 const COMPLETE_WORKS_FILE = "completeworks.txt"
+const PUNCT_MARKS = ".!?]"
 const TITLES_FILE = "titles.txt"
 
 func main() {
@@ -83,39 +84,46 @@ func (searcher *Searcher) Load(filename string) error {
 }
 
 func (searcher *Searcher) Search(query string) []string {
-	charOffset := 250
+	offset := 250
 	idxs := searcher.SuffixArray.Lookup([]byte(strings.ToLower(query)), -1)		// []int
-
-	// TODO Some results are missing the query. Fix it.
 	/* TODO Rewrite this file and static/app.js so that this function returns
 	* separate arrays for results, titles, indices, etc. instead of appending all
 	* to results array. */
-	// TODO Mark the query in the search results page.
 	results := []string{}
-	for _, idx := range idxs {
-		var context string
-		_, value := searcher.TitleMap.Floor(idx)
+	for _, queryBegin := range idxs {	// index of query within searcher.CompleteWorks
+		_, value := searcher.TitleMap.Floor(queryBegin)
 		title := value.(string)
 		// Add 2 because otherwise context will start with ". "
-		senBegin := lastIndexBefore(searcher.CompleteWorks, '.', idx) + 2;
-		if senBegin < 0 {
-			context = searcher.CompleteWorks[idx - charOffset / 2 : idx + charOffset / 2]
-		} else {
-			context = searcher.CompleteWorks[senBegin : senBegin + charOffset] + "..."
+		// Begin and end indices of context within searcher.CompleteWorks.
+		contextBegin := lastIndexBefore(searcher.CompleteWorks, PUNCT_MARKS, queryBegin) + 2;
+		contextEnd := contextBegin + offset
+		// Make sure query is in context.
+		if queryBegin + len(query) > contextEnd {
+			contextEnd = queryBegin + len(query)
 		}
+		context := searcher.CompleteWorks[contextBegin : contextEnd] + "..."
+		// Fall back to original method if no end of previous sentence found.
+		if contextBegin < 0 {
+			context = searcher.CompleteWorks[queryBegin - offset / 2 : queryBegin + offset / 2]
+		} 
+		// Begin index of query within context.
+		b := queryBegin - contextBegin;
+		e := b + len(query)
+		// TODO Move marking to front-end.
+		context = context[:b] + "<mark>" + context[b:e] + "</mark>" + context[e:]
 		results = append(results, title, context)
 	}
 	return results
 }
 
-/* Returns the last index of a given character that comes before an index.
+/* Returns the last index of given characters that comes before an index.
 str: The string to search.
-char: The character, the index of which this function returns.
+chars: The characters, the index of which this function returns.
 index: Only the left of this index is searched.
 */
-func lastIndexBefore(str string, char byte, index int) int {
+func lastIndexBefore(str string, chars string, index int) int {
 	for i := index; i >= 0; i-- {
-		if str[i] == char {
+		if strings.IndexByte(chars, str[i]) >= 0 {
 			return i
 		}
 	}

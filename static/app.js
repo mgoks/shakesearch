@@ -25,6 +25,16 @@ const Controller = {
 					</tr>`;
 			rows.push(row);
 		}
+		if (rows.length == 0) {
+			rows.push(`
+					<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+						<td class="py-4 px-6">
+							<h6 class="text-lg font-bold dark:text-blue">
+								Looks like Shakespeare did not use this word or phrase in none of his works.
+							</h6>
+						</td>
+					</tr>`);
+		}
     table.innerHTML = rows.join('\n');
   },
 };
