@@ -42,11 +42,10 @@ func main() {
 }
 
 type Searcher struct {
-	CompleteWorks						string
-	CompleteWorksLowerCase	string
-	SuffixArray							*suffixarray.Index
-	// Index (int) to title (string) mappings.
-	TitleMap								*treemap.Map
+	CompleteWorks          string
+	CompleteWorksLowerCase string
+	SuffixArray            *suffixarray.Index
+	TitleMap               *treemap.Map
 }
 
 func handleSearch(searcher Searcher) func(w http.ResponseWriter, r *http.Request) {
@@ -84,30 +83,30 @@ func (searcher *Searcher) Load(filename string) error {
 }
 
 func (searcher *Searcher) Search(query string) []string {
+	var idxs []int = searcher.SuffixArray.Lookup([]byte(strings.ToLower(query)), -1) 
 	offset := 250
-	idxs := searcher.SuffixArray.Lookup([]byte(strings.ToLower(query)), -1)		// []int
 	/* TODO Rewrite this file and static/app.js so that this function returns
 	* separate arrays for results, titles, indices, etc. instead of appending all
 	* to results array. */
 	results := []string{}
-	for _, queryBegin := range idxs {	// index of query within searcher.CompleteWorks
+	for _, queryBegin := range idxs { // index of query within searcher.CompleteWorks
 		_, value := searcher.TitleMap.Floor(queryBegin)
 		title := value.(string)
 		// Add 2 because otherwise context will start with ". "
 		// Begin and end indices of context within searcher.CompleteWorks.
-		contextBegin := lastIndexBefore(searcher.CompleteWorks, PUNCT_MARKS, queryBegin) + 2;
+		contextBegin := lastIndexBefore(searcher.CompleteWorks, PUNCT_MARKS, queryBegin) + 2
 		contextEnd := contextBegin + offset
 		// Make sure query is in context.
-		if queryBegin + len(query) > contextEnd {
+		if queryBegin+len(query) > contextEnd {
 			contextEnd = queryBegin + len(query)
 		}
-		context := searcher.CompleteWorks[contextBegin : contextEnd] + "..."
+		context := searcher.CompleteWorks[contextBegin:contextEnd] + "..."
 		// Fall back to original method if no end of previous sentence found.
 		if contextBegin < 0 {
-			context = searcher.CompleteWorks[queryBegin - offset / 2 : queryBegin + offset / 2]
-		} 
+			context = searcher.CompleteWorks[queryBegin-offset/2 : queryBegin+offset/2]
+		}
 		// Begin index of query within context.
-		b := queryBegin - contextBegin;
+		b := queryBegin - contextBegin
 		e := b + len(query)
 		// TODO Move marking to front-end.
 		context = context[:b] + "<mark>" + context[b:e] + "</mark>" + context[e:]
@@ -116,7 +115,9 @@ func (searcher *Searcher) Search(query string) []string {
 	return results
 }
 
-/* Returns the last index of given characters that comes before an index.
+/*
+	Returns the last index of given characters that comes before an index.
+
 str: The string to search.
 chars: The characters, the index of which this function returns.
 index: Only the left of this index is searched.
@@ -127,7 +128,7 @@ func lastIndexBefore(str string, chars string, index int) int {
 			return i
 		}
 	}
-	return -1;
+	return -1
 }
 
 /* Populates searcher's TitleMap such that the keys refer to the beginning of a
@@ -142,7 +143,6 @@ func (searcher *Searcher) createTitleMap() error {
 		return fmt.Errorf("Load: %w", err)
 	}
 	titles := strings.Split(string(data), "\n")
-
 	searcher.TitleMap = treemap.NewWithIntComparator()
 	for _, title := range titles {
 		lastIndex := strings.LastIndex(searcher.CompleteWorks, title)

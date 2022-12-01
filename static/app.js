@@ -30,7 +30,7 @@ const Controller = {
 					<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
 						<td class="py-4 px-6">
 							<h6 class="text-lg font-bold dark:text-blue">
-								Looks like Shakespeare did not use this word or phrase in none of his works.
+								Looks like Shakespeare did not use this word or phrase in any of his works.
 							</h6>
 						</td>
 					</tr>`);
