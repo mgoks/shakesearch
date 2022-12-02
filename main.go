@@ -13,6 +13,20 @@ import (
 	"strings"
 )
 
+type Searcher struct {
+	CompleteWorks          string
+	CompleteWorksLowerCase string
+	SuffixArray            *suffixarray.Index
+	TitleMap               *treemap.Map
+}
+
+type Result struct {
+	context string
+	title string
+	begin int
+	end int
+}
+
 const COMPLETE_WORKS_FILE = "completeworks.txt"
 const PUNCT_MARKS = ".!?]"
 const TITLES_FILE = "titles.txt"
@@ -41,13 +55,6 @@ func main() {
 	}
 }
 
-type Searcher struct {
-	CompleteWorks          string
-	CompleteWorksLowerCase string
-	SuffixArray            *suffixarray.Index
-	TitleMap               *treemap.Map
-}
-
 func handleSearch(searcher Searcher) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		query, ok := r.URL.Query()["q"]
@@ -59,6 +66,8 @@ func handleSearch(searcher Searcher) func(w http.ResponseWriter, r *http.Request
 		results := searcher.Search(query[0])
 		buf := &bytes.Buffer{}
 		enc := json.NewEncoder(buf)
+		// TODO Marshal results to JSON and send that to front-end instead of
+		// sending results directly.
 		err := enc.Encode(results)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -82,18 +91,16 @@ func (searcher *Searcher) Load(filename string) error {
 	return nil
 }
 
+// TODO Change return type to []Result
 func (searcher *Searcher) Search(query string) []string {
 	var idxs []int = searcher.SuffixArray.Lookup([]byte(strings.ToLower(query)), -1) 
 	offset := 250
-	/* TODO Rewrite this file and static/app.js so that this function returns
-	* separate arrays for results, titles, indices, etc. instead of appending all
-	* to results array. */
 	results := []string{}
 	for _, queryBegin := range idxs { // index of query within searcher.CompleteWorks
 		_, value := searcher.TitleMap.Floor(queryBegin)
 		title := value.(string)
-		// Add 2 because otherwise context will start with ". "
 		// Begin and end indices of context within searcher.CompleteWorks.
+		// Add 2 because otherwise context will start with ". "
 		contextBegin := lastIndexBefore(searcher.CompleteWorks, PUNCT_MARKS, queryBegin) + 2
 		contextEnd := contextBegin + offset
 		// Make sure query is in context.
