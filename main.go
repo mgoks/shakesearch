@@ -22,9 +22,9 @@ type Searcher struct {
 
 type Result struct {
 	context string
-	title string
-	begin int
-	end int
+	title   string
+	begin   int
+	end     int
 }
 
 const COMPLETE_WORKS_FILE = "completeworks.txt"
@@ -93,7 +93,7 @@ func (searcher *Searcher) Load(filename string) error {
 
 // TODO Change return type to []Result
 func (searcher *Searcher) Search(query string) []string {
-	var idxs []int = searcher.SuffixArray.Lookup([]byte(strings.ToLower(query)), -1) 
+	var idxs []int = searcher.SuffixArray.Lookup([]byte(strings.ToLower(query)), -1)
 	offset := 250
 	results := []string{}
 	for _, queryBegin := range idxs { // index of query within searcher.CompleteWorks
