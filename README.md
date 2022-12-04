@@ -48,3 +48,6 @@ We will be primarily evaluating based on how well the search works for users. A 
     * The search results table should be updated by using DOM and HTML DOM API in app.js instead of writing HTML directly in strings to improve security.
 
    In addition to the above, I would also add unit tests to both back and front ends, if I had more time.
+
+## Other
+This repository is viewed best when the tab size is set to 2. Thus feel free to update [your settings](https://github.com/settings/appearance) if you will.
