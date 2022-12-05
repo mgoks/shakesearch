@@ -39,7 +39,7 @@ We will be primarily evaluating based on how well the search works for users. A 
    
    To improve the UI, I used Tailwind CSS. With this UI framework, I created a user-friendly web page by creating a search bar and by adding an image on top of it. The query is now marked in the search results so that the user can easily see the query within the context. I also added a favicon for the page.
    
-   The most crucial further improvement at this point is to tolerate typos and misspellings by expanding the search algorithm to include fuzzy text-search. This can be implemented by using the Levenshtein distance algorithm or using an external library if such one exists.
+   The most crucial further improvement at this point is to tolerate typos and misspellings by expanding the search algorithm to include fuzzy text-search. This can be implemented by using the Levenshtein distance algorithm or using an external library if such one exists. UI can further be improved by centring the search results table.
    
    I added a number of *TODO* comments to some of the source files outlining what needs to be done to improve code quality. Here is a list of these tasks here as well.
     * Move the text marking from the back-end to the front-end. This is currently done in the back-end because doing it in the front-end results in a bug in which some results are marked at wrong positions.
